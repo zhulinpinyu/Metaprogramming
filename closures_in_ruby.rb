@@ -71,8 +71,39 @@ save_for_later { puts "Welcome." }
 @saved.call  #Welcome.
 
 
+#https://innig.net/software/ruby/closures-in-ruby
 ######Section Two
 
+example 6
+
+def save_for_later(&b)
+  @saved = Proc.new(&b) #same as: @saved = b
+end
+
+save_for_later { puts "Hello again." }
+@saved.call
+
+example 7
+
+@saved_proc_new = Proc.new { puts "I'm declared on spot with Proc.new" }
+@saved_proc_new.call
+
+example 8
+
+@saved_proc_new = Proc.new {puts "I'm declared with Proc.new"}
+@saved_proc = proc {puts "I'm declared with proc"}
+@saved_lambda = lambda {puts "I'm declared with lambda"}
+
+def some_method
+  puts "I'm declared as a method."
+end
+
+@method_as_closure = method(:some_method)
+
+@saved_proc_new.call
+@saved_proc.call
+@saved_lambda.call
+@method_as_closure.call
 
 
 
