@@ -185,6 +185,16 @@ end
 
 puts make_lambda.call
 
+example 15
+
+def g
+  result = f(proc{return "Value from proc"})
+  puts "f returned: " + result
+  "Value from g"
+end
+
+puts "g returned: #{g}"
+
 
 
 
