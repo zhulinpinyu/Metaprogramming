@@ -195,6 +195,86 @@ end
 
 puts "g returned: #{g}"
 
+###https://innig.net/software/ruby/closures-in-ruby
+###Section 4: Closures and Arity
+example 16
+
+puts "One-arg lambda:"
+puts lambda{|x|}.arity
+puts "Three-arg lambda:"
+puts lambda{|x,y,z|}.arity
+
+puts "No-args lambda:"
+puts lambda{}.arity
+puts "Varargs lambda:"
+puts lambda{|*args|}.arity
+
+example 17
+
+def call_with_too_many_args(closure)
+  begin
+    puts "closure arity: #{closure.arity}"
+    closure.call(1,2,3,4,5,6)
+    puts "Too many args worked"
+  rescue Exception => e
+    puts "Too many args threw exception #{e.class}: #{e}"
+  end
+end
+
+def two_arg_method(x,y)
+end
+
+puts; puts "Proc.new:"; call_with_too_many_args(Proc.new{|x,y|})
+puts; puts "proc:"; call_with_too_many_args(proc{|x,y|})
+
+#lambda and method 会严格做数据检查
+puts; puts "lambda:"; call_with_too_many_args(lambda{|x,y|})
+puts; puts "Method:"; call_with_too_many_args(method(:two_arg_method))
+
+def call_with_too_few_args(closure)
+  begin
+    puts "closure arity: #{closure.arity}"
+    closure.call
+    puts "Too few args worked"
+  rescue Exception => e
+    puts "Too few args threw exception #{e.class}: #{e}"
+  end
+end
+
+puts; puts "Proc.new:"; call_with_too_few_args(Proc.new{|x,y|})
+puts; puts "proc:"; call_with_too_few_args(proc{|x,y|})
+
+#lambda and method 会严格做数据检查
+puts; puts "lambda:"; call_with_too_few_args(lambda{|x,y|})
+puts; puts "Method:"; call_with_too_few_args(method(:two_arg_method))
+
+example 18
+
+def one_arg_method(x)
+end
+
+puts; puts "Proc.new:"; call_with_too_many_args(Proc.new{|x|})
+puts; puts "proc:"; call_with_too_many_args(proc{|x|})
+puts; puts "lambda:"; call_with_too_many_args(lambda{|x|})
+puts; puts "Method:"; call_with_too_many_args(method(:one_arg_method))
+puts; puts "Proc.new:"; call_with_too_few_args(Proc.new{|x|})
+puts; puts "proc:"; call_with_too_few_args(proc{|x|})
+puts; puts "lambda:"; call_with_too_few_args(lambda{|x|})
+puts; puts "Method:"; call_with_too_few_args(method(:one_arg_method))
+
+example 19
+
+def no_arg_method
+end
+
+puts; puts "Proc.new:"; call_with_too_many_args(Proc.new{||})
+puts; puts "proc:"; call_with_too_many_args(proc{||})
+puts; puts "lambda:"; call_with_too_many_args(lambda{||})
+puts; puts "Method:"; call_with_too_many_args(method(:no_arg_method))
+
+
+
+
 
 
 
