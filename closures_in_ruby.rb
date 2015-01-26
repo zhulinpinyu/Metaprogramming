@@ -106,6 +106,87 @@ end
 @method_as_closure.call
 
 
+#https://innig.net/software/ruby/closures-in-ruby
+###Section Three Closures and Control Flow
+
+example 9
+
+def f(closure)
+  puts
+  puts "About to call closure"
+  result = closure.call
+  puts "Closure returned: #{result}"
+  "Value from f"
+end
+
+puts "f returned: " + f(Proc.new {"Value from Proc.new"})
+puts "f returned: " + f(proc {"Value from proc"})
+puts "f returned: " + f(lambda {"Value from lambda"})
+
+def another_method
+  "Value from method"
+end
+puts "f returned: " + f(method(:another_method))
+
+
+example 10
+
+begin
+  f(Proc.new{return "Value from Proc.new"})
+rescue Exception => e
+  puts "Failed with #{e.class}: #{e}"
+end
+
+example 11
+
+def g
+  result = f(Proc.new{return "Value from Proc.new"})
+  puts "f returned: "+ result  #never executed
+  "Value from g" #never executed
+end
+
+puts "g returned: #{g}"
+
+example 12
+
+def make_proc_new
+  begin
+    Proc.new {return "Value from Proc.new"}
+  ensure
+    puts "make_proc_new exited"
+  end
+end
+
+begin
+  puts make_proc_new.call
+rescue Exception => e
+  puts "Failed with #{e.class}: #{e}"
+end
+
+example 13
+
+def g
+  result = f(lambda{return "Value from lambda"})
+  puts "f returned: " + result
+  "Value from g"
+end
+
+puts "g returned: #{g}"
+
+example 14
+
+def make_lambda
+  begin
+    lambda { return "Value from lambda" }
+  ensure
+    puts "make_lambda exited"
+  end
+end
+
+puts make_lambda.call
+
+
+
 
 
 
