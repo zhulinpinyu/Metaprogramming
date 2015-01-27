@@ -273,10 +273,161 @@ puts; puts "lambda:"; call_with_too_many_args(lambda{||})
 puts; puts "Method:"; call_with_too_many_args(method(:no_arg_method))
 
 
+###https://innig.net/software/ruby/closures-in-ruby
+###Section 7: Doing Something Cool with Closures
+
+example 20
+
+class LispyEnumerable
+  include Enumerable
+
+  def initialize(tree)
+    @tree = tree
+  end
+
+  def each
+    while @tree
+      car,cdr = @tree
+      yield car
+      @tree = cdr
+    end
+  end
+end
+
+list =[1,[2,[3]]]
+
+LispyEnumerable.new(list).each do |x|
+  p x
+end
+
+example 21
+
+class LazyLispyEnumerable
+  def initialize(tree)
+    @tree = tree
+  end
+
+  def each
+    while @tree
+      car,cdr = @tree.call
+      yield car
+      @tree = cdr
+    end
+  end
+end
+
+list = lambda {[1, lambda{[2,lambda{[3]}]}]}
+LazyLispyEnumerable.new(list).each do |x|
+  p x
+end
+
+example 22
+
+list = lambda do
+  puts "First lambda called"
+  [1, lambda do
+    puts "Second lambda called"
+    [2, lambda do
+      puts "Third lambda called"
+      [3]
+    end]
+  end]
+end
+
+puts "List created; about to iterate:"
+LazyLispyEnumerable.new(list).each do |x|
+  p x
+end
+
+example 23
+
+def fibo(a,b)
+  lambda{[a,fibo(b,a+b)]}
+end
+
+LazyLispyEnumerable.new(fibo(1,1)).each do |x|
+  puts x
+  break if x > 100
+end
+
+
+
+class Lazy
+  def initialize(&generator)
+    @generator = generator
+  end
+
+  def method_missing(method, *args, &block)
+    evaluate.send(method,*args, &block)
+  end
+
+  def evaluate
+    @value = @generator.call unless @value
+    @value
+  end
+end
+
+def lazy(&b)
+  Lazy.new(&b)
+end
+
+example 24
+
+x = lazy do
+  puts "<<<Evaluating lazy value>>>"
+  "lazy value"
+end
+
+puts "x has now been assigned"
+puts "About to call one of x's methods:"
+puts "x.size: #{x.size}"
+puts "x.swapcase: #{x.swapcase}"
+
+example 25
+
+def fibo(a,b)
+  lazy {[a,fibo(a,a+b)]}
+end
+
+LispyEnumerable.new(fibo(1,1)).each_with_index do |x|
+  p x
+  break if x>200
+end
+
+example 26
+
+car,cdr = fibo(1,1)
+puts "car=#{car}, cdr=#{cdr}"
 
 
 
 
+#-------------------------
+class Lazy
+  def initialize(&generator)
+    @generator = generator
+  end
+
+  def method_missing(method, *args, &block)
+    evaluate.send(method,*args,&block)
+  end
+
+  def respond_to?(method)
+    evaluate.respond_to?(method)
+  end
+
+  def evaluate
+    @value = @generator.call unless @value
+    @value
+  end
+end
+
+example 27
+
+LispyEnumerable.new(fibo(1,1)).each do |x|
+  puts x
+  break if x > 200
+end
 
 
 
